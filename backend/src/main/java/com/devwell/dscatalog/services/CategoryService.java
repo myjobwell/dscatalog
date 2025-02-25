@@ -3,7 +3,8 @@ package com.devwell.dscatalog.services;
 import com.devwell.dscatalog.dto.CategoryDTO;
 import com.devwell.dscatalog.entities.Category;
 import com.devwell.dscatalog.repositories.CategoryRepository;
-import com.devwell.dscatalog.services.exceptions.EntityNotFoundException;
+import com.devwell.dscatalog.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +31,7 @@ public class CategoryService {
     public CategoryDTO findById(Long id) {
         //option é para evitar trabalhar com valor nullo, nunca vai ser um objeto nullo
         Optional<Category> obj = categoryRepository.findById(id);
-        Category entity = obj.orElseThrow(() -> new EntityNotFoundException("Entity Not Found"));
+        Category entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity Not Found"));
         return new CategoryDTO(entity);
     }
 
@@ -40,5 +41,18 @@ public class CategoryService {
         entity.setName(dto.getName());
         entity = categoryRepository.save(entity);
         return new CategoryDTO(entity);
+    }
+
+    @Transactional
+    public CategoryDTO update(Long id, CategoryDTO dto) {
+//        getOne nao precisa consultar e depois atualizar no campo, deixa mais enxuto o put
+//        instancia temporariamente o dado para quando for chamado o save
+        try {
+        Category entity = categoryRepository.getOne(id);
+        entity.setName(dto.getName());
+        entity = categoryRepository.save(entity);
+        return new CategoryDTO(entity);
+    } catch (EntityNotFoundException e) {
+        throw new ResourceNotFoundException("Id Not Found" + id);}
     }
 }
