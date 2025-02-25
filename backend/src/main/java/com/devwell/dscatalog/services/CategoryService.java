@@ -4,6 +4,7 @@ import com.devwell.dscatalog.entities.Category;
 import com.devwell.dscatalog.repositories.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,9 +14,13 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+
+    @Transactional(readOnly = true)
+//    tag acima inicia uma transação e nao trava o banco de dados durante a consulta
     public List<Category> findAll() {
         return categoryRepository.findAll();
     }
+
 
 
 
