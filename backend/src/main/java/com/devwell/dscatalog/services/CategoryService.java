@@ -3,10 +3,13 @@ package com.devwell.dscatalog.services;
 import com.devwell.dscatalog.dto.CategoryDTO;
 import com.devwell.dscatalog.entities.Category;
 import com.devwell.dscatalog.repositories.CategoryRepository;
+import com.devwell.dscatalog.services.exceptions.DatabaseException;
 import com.devwell.dscatalog.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -55,4 +58,23 @@ public class CategoryService {
     } catch (EntityNotFoundException e) {
         throw new ResourceNotFoundException("Id Not Found" + id);}
     }
+
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void delete(Long id) {
+        if (!categoryRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Id Not Found " + id);
+        }
+        try {
+            categoryRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Falha de integridade e referencial");
+        }
+
+
+
+    }
+
+
+
 }
