@@ -11,8 +11,8 @@
 	<groupId>com.devwell</groupId>
 	<artifactId>dscatalog</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>dscatalog</name>
-	<description>Demo project for Spring Boot</description>
+	<name>backend</name>
+	<description>backend</description>
 	<url/>
 	<licenses>
 		<license/>
