@@ -3,6 +3,7 @@ package com.devwell.dscatalog.entities;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Objects;
 
 
@@ -17,6 +18,11 @@ public class Category implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+   @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+    private Instant createdAt;
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+    private Instant updatedAt;
+
 
     public Category(Long id, String name) {
         this.id = id;
@@ -42,6 +48,27 @@ public class Category implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    //toda vez que executar um save no jpa ele já adicoina o instant now
+    @PrePersist
+    public void prePersist() {
+        createdAt = Instant.now();
+    }
+
+    //toda vez que executar um update seta o instant now
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = Instant.now();
+    }
+
 
     //comparar se um objeto é igual a outro
     @Override
