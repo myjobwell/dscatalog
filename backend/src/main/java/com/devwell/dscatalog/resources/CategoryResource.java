@@ -2,6 +2,8 @@ package com.devwell.dscatalog.resources;
 
 
 import com.devwell.dscatalog.entities.Category;
+import com.devwell.dscatalog.services.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,12 +18,14 @@ import java.util.List;
 public class CategoryResource {
     //implementa o controlador rest
 
+    @Autowired
+    private CategoryService categoryService;
+
     @GetMapping
     public ResponseEntity<List<Category>> findAll() {
-        List<Category> list = new ArrayList<>();
-        list.add(new Category(1L, "BOOK"));
-        list.add(new Category(2L, "ELECTRONICS"));
+        List<Category> list = categoryService.findAll();
         return ResponseEntity.ok().body(list);
+
     }
 
 
