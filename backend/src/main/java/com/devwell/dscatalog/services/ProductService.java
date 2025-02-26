@@ -1,10 +1,13 @@
 package com.devwell.dscatalog.services;
 
 
+import com.devwell.dscatalog.dto.CategoryDTO;
 import com.devwell.dscatalog.dto.ProductDTO;
 
+import com.devwell.dscatalog.entities.Category;
 import com.devwell.dscatalog.entities.Product;
 
+import com.devwell.dscatalog.repositories.CategoryRepository;
 import com.devwell.dscatalog.repositories.ProductRepository;
 import com.devwell.dscatalog.services.exceptions.DatabaseException;
 import com.devwell.dscatalog.services.exceptions.ResourceNotFoundException;
@@ -26,6 +29,9 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
 
     @Transactional(readOnly = true)
 //    tag acima inicia uma transação e nao trava o banco de dados durante a consulta
@@ -46,7 +52,8 @@ public class ProductService {
     @Transactional
     public ProductDTO create(ProductDTO dto) {
         Product entity = new Product();
-//        entity.setName(dto.getName());
+        //aqui foi criado um metodo que ao inves de passar uma serie de seter ele pega a entidade toda
+        copyDtoToEntity(dto, entity);
         entity = productRepository.save(entity);
         return new ProductDTO(entity);
     }
@@ -59,11 +66,27 @@ public class ProductService {
 //        instancia temporariamente o dado para quando for chamado o save
         try {
             Product entity = productRepository.getOne(id);
-//        entity.setName(dto.getName());
+            //reaproveitando o mesmo trecho de codigo usando no insert
+            copyDtoToEntity(dto, entity);
         entity = productRepository.save(entity);
         return new ProductDTO(entity);
     } catch (EntityNotFoundException e) {
         throw new ResourceNotFoundException("Id Not Found" + id);}
+    }
+
+    private void copyDtoToEntity(ProductDTO dto, Product entity) {
+        entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
+        entity.setPrice(dto.getPrice());
+        entity.setImgUrl(dto.getImgUrl());
+        entity.setDate(dto.getDate());
+
+        entity.getCategories().clear();
+        for (CategoryDTO catDto : dto.getCategories()) {
+            Category category = categoryRepository.getOne(catDto.getId());
+            entity.getCategories().add(category);
+        }
+
     }
 
 
@@ -77,9 +100,6 @@ public class ProductService {
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Falha de integridade e referencial");
         }
-
-
-
     }
 
 
