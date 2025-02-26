@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,10 +34,11 @@ public class ProductService {
     private CategoryRepository categoryRepository;
 
 
+    //**LISTA COMPLETA COM PAGINAÇÃO
     @Transactional(readOnly = true)
 //    tag acima inicia uma transação e nao trava o banco de dados durante a consulta
-    public Page<ProductDTO> findAllPaged(PageRequest pageRequest) {
-        Page<Product> list = productRepository.findAll(pageRequest);
+    public Page<ProductDTO> findAllPaged(Pageable pageable) {
+        Page<Product> list = productRepository.findAll(pageable);
         return list.map(ProductDTO::new);
     }
 
