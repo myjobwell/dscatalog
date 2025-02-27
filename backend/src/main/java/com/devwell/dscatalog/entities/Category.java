@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 
 //serializabe padrao java para que o objetio seja convertido em bites
@@ -23,14 +25,23 @@ public class Category implements Serializable {
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant updatedAt;
 
+    @ManyToMany(mappedBy = "categories")
+    private Set<Product> products = new HashSet<>();
+
+
 
     public Category(Long id, String name) {
         this.id = id;
         this.name = name;
     }
 
+
     public Category() {
 
+    }
+
+    public Set<Product> getProducts() {
+        return products;
     }
 
     public Long getId() {
